@@ -1,0 +1,2 @@
+import './cargarCategorias'
+import './eventoCategorias'
