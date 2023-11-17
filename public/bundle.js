@@ -1,6 +1,6 @@
 'use strict';
 
-var dataFotos = {
+var datos = {
 	fotos: {
 		america: [
 			{
@@ -431,7 +431,7 @@ var dataFotos = {
 	},
 };
 
-const { fotos } = dataFotos;
+const { fotos } = datos;
 
 var dataCategorias = {
 	categorias: [
@@ -474,29 +474,109 @@ categorias.forEach((categoria) => {
 	contenedorCategorias$1.append(nuevaCategoria);
 });
 
+const galeria$3 = document.getElementById('galeria');
+
+const cargarImagen = (id, nombre, ruta, descripcion) => {
+    galeria$3.querySelector('.galeria__imagen').src = ruta;
+    galeria$3.querySelector('.galeria__titulo').innerText = nombre;
+    galeria$3.querySelector('.galeria__descripcion-imagen-activa').innerText = descripcion;
+    galeria$3.querySelector('.galeria__imagen').dataset.idImagen = id;
+
+    const categoriaActual = galeria$3.dataset.categoria;
+    const fotos = datos.fotos[categoriaActual];
+
+    let indexImagenActual;
+    fotos.forEach((foto, index) => {
+        if(foto.id === id){
+            indexImagenActual = index;
+        }
+    });
+    
+    //Marcar la imagen como activa
+    if(galeria$3.querySelectorAll('.galeria__carousel-slide').length >0){
+        //Clase activa
+        galeria$3.querySelector('.galeria__carousel-slide--active').classsList.remove('galeria__carousel-slide--active');
+
+
+        galeria$3.querySelectorAll('.galeria__carousel-slide')[indexImagenActual].classList.add('galeria__carousel-slide--active');
+    }
+
+    
+    
+
+};
+
 const contenedorCategorias = document.getElementById('categorias');
-const galeria = document.getElementById('galeria');
+const galeria$2 = document.getElementById('galeria');
 
 contenedorCategorias.addEventListener('click', (e)=>{
     e.preventDefault();
    
     if(e.target.closest('a')){
-        galeria.classList.add('galeria--active');
+        galeria$2.classList.add('galeria--active');
         document.body.style.overflow = 'hidden';
 
-        const categoriaActiva = e.target.dataset.categoria;
-        const fotos = dataFotos.fotos[categoriaActiva];
+        const categoriaActiva = e.target.closest('a').dataset.categoria;
+        galeria$2.dataset.categoria = categoriaActiva;
+
+
+        const fotos = datos.fotos[categoriaActiva];
+        const carousel = document.querySelector('.galeria__carousel-slides');
+
+        const { id, nombre, ruta, descripcion } = fotos[0];
+        cargarImagen(id, nombre, ruta, descripcion);
+        
+
+        carousel.innerHTML='',
         
         fotos.forEach((foto)=>{
             const slide = `<a href="#" class="galeria__carousel-slide">
-            <img class="galeria__carousel-image" src="${foto.ruta}" alt="" />
+            <img class="galeria__carousel-image" src="${foto.ruta}" data-id="${foto.id}" alt="" />
         </a>`;
-        galeria.querySelector('.galeria__carousel-slides').innerHTML += slide;
+        galeria$2.querySelector('.galeria__carousel-slides').innerHTML += slide;
         });
 
-        galeria.querySelector('.galeria__carousel-slide').classList.add('galeria__carousel-slide--active');
+        galeria$2.querySelector('.galeria__carousel-slide').classList.add('galeria__carousel-slide--active');
 
         
        
+    }
+});
+
+const galeria$1 = document.getElementById('galeria');
+const cerrarGaleria = () => {
+    galeria$1.classList.remove('galeria--active');
+
+    document.body.style.overflow = '';
+
+};
+
+const slideClick = (e) => {
+    let ruta, nombre, descripcion;
+    const id = parseInt(e.target.dataset.id);
+    const galeria = document.getElementById('galeria');
+    const categoriaActiva = galeria.dataset.categoria;
+    
+   datos.fotos[categoriaActiva].forEach((foto) =>{
+    if(foto.id === id){
+        ruta = foto.ruta;
+        nombre = foto.nombre;
+        descripcion = foto.descripcion;
+    }
+   });
+
+   cargarImagen(id, nombre, ruta, descripcion);
+};
+
+const galeria = document.getElementById('galeria');
+galeria.addEventListener('click', (e)=>{
+    const boton = e.target.closest('button');
+
+    if(boton?.dataset?.accion === 'cerrar-galeria'){
+        cerrarGaleria();
+    }
+
+    if(e.target.dataset.id){
+        slideClick(e);
     }
 });
