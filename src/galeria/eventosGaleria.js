@@ -1,5 +1,7 @@
 import cerrarGaleria from "./cerrarGaleria";
 import slideClick from "./slideClick";
+import { cargarAnteriorSiguiente } from "./cargarImagen";
+import carousel from "./carousel";
 
 const galeria = document.getElementById('galeria');
 galeria.addEventListener('click', (e)=>{
@@ -12,5 +14,34 @@ galeria.addEventListener('click', (e)=>{
     if(e.target.dataset.id){
         slideClick(e);
     };
+
+    //boton siguiente imagen
+    if(boton?.dataset?.accion === 'siguiente-imagen'){
+        cargarAnteriorSiguiente('siguiente')
+        
+
+    }
+
+
+    
+    if(boton?.dataset?.accion === 'anterior-imagen'){
+        cargarAnteriorSiguiente('anterior')
+        
+
+    }
+
+    
+    
+////////////////// Boton carousel
+    if(boton?.dataset?.accion === 'siguiente-slide'){
+        carousel("adelante");
+        
+
+    }
+    if(boton?.dataset?.accion === 'anterior-slide'){
+        carousel("atras");
+        
+
+    }
 
 })
